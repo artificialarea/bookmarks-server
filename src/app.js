@@ -6,6 +6,7 @@ const helmet = require('helmet')
 const { NODE_ENV } = require('./config')
 const winston = require('winston')
 const { bookmarks } = require('../store')
+const { v4: uuid } = require('uuid')
 
 const app = express()
 
@@ -45,6 +46,36 @@ app.get('/bookmarks/:id', (req, res) => {
     return res.status(404).send('bookmark not found')
   }
   res.status(200).json(bookmark)
+})
+
+app.post('/bookmarks', (req, res) =>{
+  const { title, url, description, rating } = req.body
+
+  if(!title){
+    return res.status(400).send('Invalid! title required.')
+  }
+  if(!url){
+    return res.status(400).send('Invalid! url required.')
+  }
+  if(!description){
+    return res.status(400).send('Invalid! description required.')
+  }
+  const id = uuid();
+
+  const bookmark ={
+    id,
+    title,
+    url,
+    description,
+    rating
+  }
+  bookmarks.push(bookmark)
+  logger.info(`Bookmark with id: ${id} created.`)
+  // res.status(204).end()
+  res
+   .status(201)
+   .location(`http//localhost:8000/bookmarks/${id}`)
+   .json(bookmark)
 })
 
 app.use(function errorHandler(error, req, res, next) {
