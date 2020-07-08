@@ -8,6 +8,7 @@ const winston = require('winston')
 const { bookmarks } = require('../store')
 const { v4: uuid } = require('uuid')
 
+
 const app = express()
 
 const morganOption = (NODE_ENV === 'production') 
@@ -17,6 +18,7 @@ const morganOption = (NODE_ENV === 'production')
 app.use(morgan(morganOption))
 app.use(helmet())
 app.use(cors())
+app.use(express.json());
 
 const logger = winston.createLogger({
   level: 'info',
@@ -49,7 +51,7 @@ app.get('/bookmarks/:id', (req, res) => {
 })
 
 app.post('/bookmarks', (req, res) =>{
-  const { title, url, description, rating } = req.body
+  const { title, url, description, rating = 1 } = req.body
 
   if(!title){
     return res.status(400).send('Invalid! title required.')
