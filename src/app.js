@@ -4,6 +4,8 @@ const morgan = require('morgan')
 const cors = require('cors')
 const helmet = require('helmet')
 const { NODE_ENV } = require('./config')
+const winston = require('winston')
+const { bookmarks } = require('../store')
 
 const app = express()
 
@@ -15,8 +17,34 @@ app.use(morgan(morganOption))
 app.use(helmet())
 app.use(cors())
 
-app.get('/', (req, res) => {
-  res.send('Hello, world!')
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.json(),
+  transports: [
+    new winston.transports.File({ filename: 'info.log' })
+  ]
+});
+
+if (NODE_ENV !== 'production') {
+  logger.add(new winston.transports.Console({
+    format: winston.format.simple()
+  }));
+}
+
+app.get('/bookmarks', (req, res) => {
+  res.send(bookmarks)
+})
+
+app.get('/bookmarks/:id', (req, res) => {
+  const { id } = req.params
+
+  const bookmark = bookmarks.find(b => b.id == id)
+  
+  if(!bookmark){
+    logger.error(`Bookmark with id: ${id} not found`)
+    return res.status(404).send('bookmark not found')
+  }
+  res.status(200).json(bookmark)
 })
 
 app.use(function errorHandler(error, req, res, next) {
