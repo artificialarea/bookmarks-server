@@ -3,9 +3,9 @@ const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
 const helmet = require('helmet')
-const validateBearerToken = require('./middleware/validateBearerToken')
-const fourOhFourErrorHandler = require('./middleware/fourOhFourErrorHandler')
-const serverErrorHandler = require('./middleware/serverErrorHandler')
+const validateBearerToken = require('./middleware/validate-bearer-token')
+const errorHandlerFourOhFour = require('./middleware/error-handler-four-oh-four')
+const errorHandler = require('./middleware/error-handler')
 
 const { NODE_ENV } = require('./config')
 const bookmarksRouter = require('./routes/bookmarks.router')
@@ -19,8 +19,8 @@ app.use(validateBearerToken)
 
 app.use('/bookmarks', bookmarksRouter)
 
-app.use(fourOhFourErrorHandler)
-app.use(serverErrorHandler)
+app.use(errorHandlerFourOhFour)
+app.use(errorHandler)
 
 
 module.exports = app
