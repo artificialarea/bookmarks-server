@@ -16,13 +16,13 @@ router
     const { title, url, description, rating = 1 } = req.body
 
     if(!title) {
-      return res.status(400).send('Invalid! title required.')
+      return res.status(400).json('Invalid! title required.')
     }
     if(!url) {
-      return res.status(400).send('Invalid! url required.')
+      return res.status(400).json('Invalid! url required.')
     }
     if(!description) {
-      return res.status(400).send('Invalid! description required.')
+      return res.status(400).json('Invalid! description required.')
     }
 
     const id = uuid();
@@ -52,7 +52,7 @@ router
 
     if(!bookmark){
       logger.error(`Bookmark with id: ${id} not found`)
-      return res.status(404).send('bookmark not found')
+      return res.status(404).json('bookmark not found')
     }
     res.status(200).json(bookmark)
   })
@@ -62,7 +62,7 @@ router
     
     if(bookmarkIndex === -1){
       logger.error(`Bookmark with id: ${id} not found`)
-      return res.status(404).send('Not found!')
+      return res.status(404).json('Not found!')
     }
     bookmarks.splice(bookmarkIndex, 1)
     logger.info(`Bookmark with id: ${id} deleted`)
