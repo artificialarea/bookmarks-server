@@ -1,4 +1,3 @@
-
 -- First, remove the table if it exists
 DROP TABLE if EXISTS bookmarker;
 
@@ -24,4 +23,10 @@ VALUES
     ('Learn * Series', 'http://casts.thinkfullabs.com/', 'videos to supplement curriculum', '4'),
     ('JustJavascript', 'https://justjavascript.com/', 'alternative mental model for JS', '4'),
     ('Eloquent Javascript', 'https://eloquentjavascript.net/05_higher_order.html', 'Higher-Order Functions chapter (still need to read)', '4'),
-    ('TJ''s Support Guide', 'https://www.notion.so/aee7a218eaab4f74b8289be7c056f574?v=bfd1ef54434e4646a811b3021301f6a7', 'this fella is a thinkful mentor', '4');
+    ('TJ''s Support Guide', 'https://www.notion.so/aee7a218eaab4f74b8289be7c056f574?v=bfd1ef54434e4646a811b3021301f6a7', 'this fella is a thinkful mentor', '4')
+;
+
+-- then in $ psql 
+-- type command '\i <filename-path>' to execute the file
+-- e.g.
+-- bookmarks=# \i ~/path/to/file/bookmarks.sql
