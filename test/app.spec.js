@@ -11,23 +11,23 @@ describe('Bookmark Endpoints', () => {
     let bookmarksCopy
 
     beforeEach('copy the bookmarks', () => {
-        console.log('store.bookmarks (beforeEach Test)', store.bookmarks)
+        // console.log('store.bookmarks (beforeEach Test)', store.bookmarks)
         // copy the bookmarks so we can restore them after each test
         bookmarksCopy = store.bookmarks.slice() 
     })
 
     afterEach('restore the bookmarks', () => {
-        console.log('store.bookmarks (endOf Test)', store.bookmarks)
+        // console.log('store.bookmarks (at end of test): ', store.bookmarks)
         // restore bookmarks to original for next test
         store.bookmarks = bookmarksCopy
-        console.log('store.bookmarks (afterEach Test)', store.bookmarks)
+        // console.log('store.bookmarks (restored to original afterEach test): ', store.bookmarks)
     })
     
 
     describe.only('Dupes of failing tests... that shouldn\'t', () => {
 
         it('DELETE /bookmarks/:id removes the bookmark by ID from the store', () => {
-            console.log('test: DELETE /bookmarks/:id')
+            // console.log('test: DELETE /bookmarks/:id')
             const secondBookmark = store.bookmarks[1]
             const expectedBookmarks = store.bookmarks.filter(s => s.id !== secondBookmark.id)
             return supertest(app)
@@ -40,7 +40,7 @@ describe('Bookmark Endpoints', () => {
         })
 
         it('POST /bookmarks adds a new bookmark to the store', () => {
-            console.log('test: POST /bookmarks')
+            // console.log('test: POST /bookmarks')
             const newBookmark = {
                 title: 'test-title',
                 url: 'https://test.com',
