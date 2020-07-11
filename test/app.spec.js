@@ -217,7 +217,19 @@ describe('Bookmark Endpoints', () => {
     //
     // Post-Script Me: unfortunately I couldn't figure out how to emulate this if I swapped the order of the test suite from DELETE-then-POST (solution above) to POST-then-DELETE. As I'm out of my depth here will leave to revisit another day...
     //
-    describe.skip('Dupes of failing tests... that shouldn\'t', () => {
+    // POST-SCRIPT-2 SOLUTION!!!!!!!!!
+    // still unsure as to why, but in bookmarks.router.js
+    // 1.
+    // changed import from
+    // const { bookmarks } = require('../store')
+    // to
+    // const store = require('../store')
+    //
+    // 2.
+    // changed all instances of const bookmarks to store.bookmarks
+    //
+    // 
+    describe('Dupes of failing tests... that shouldn\'t', () => {
 
         // this test fill fail *IF* it's the second test in testing suite
         it('DELETE /bookmarks/:id removes the bookmark by ID from the store', () => {
