@@ -212,6 +212,8 @@ describe('Bookmark Endpoints', () => {
     
     // POST-SCRIPT-2 SOLUTION!!!!!!!!!
     ////////////////////////////////////////////////////////////////////////////////////////////
+    // see git diff: https://github.com/artificialarea/bookmarks-server/compare/testing01_semi-failure...testing02_success
+    //
     // in bookmarks.router.js:
     // 1.
     // changed require/import of store from
@@ -270,7 +272,7 @@ describe('Bookmark Endpoints', () => {
                 })
         })
 
-        // duped again to demonstrate that previously, this test would have failed
+        // dupe of first (successful) unit test again to demonstrate that previously, this test would have failed
         it('DELETE /bookmarks/:id removes the bookmark by ID from the store', () => {
             // console.log('test: DELETE /bookmarks/:id')
             const secondBookmark = store.bookmarks[1]
