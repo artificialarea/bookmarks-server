@@ -170,107 +170,6 @@ describe('Bookmark Endpoints', () => {
                 .expect(400, `'url' must be a valid URL`)
         })
 
-        // see TROUBLESHOOTING FOOTNOTES below for this foolproof approach 
-        it('POST /bookmarks adds a new bookmark to the store', (done) => {
-            console.log('test: POST /bookmarks')
-            const newBookmark = {
-                title: 'test-title',
-                url: 'https://test.com',
-                description: 'test description',
-                rating: 1,
-            }
-            supertest(app)
-                .post(`/bookmarks`)
-                .send(newBookmark)
-                .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
-                .expect(201)
-                .expect(res => {
-                    // console.log('res.body: ', res.body)
-
-                    expect(res.body.title).to.eql(newBookmark.title)
-                    expect(res.body.url).to.eql(newBookmark.url)
-                    expect(res.body.description).to.eql(newBookmark.description)
-                    expect(res.body.rating).to.eql(newBookmark.rating)
-                    expect(res.body.id).to.be.a('string')
-                })
-                .then(res => {
-                    supertest(app)
-                        .get(`/bookmarks/${res.body.id}`)
-                        .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
-                        .expect(200)
-                        .expect(bookmark => {
-                            expect(bookmark.body.title).to.eql(newBookmark.title)
-                            expect(bookmark.body.url).to.eql(newBookmark.url)
-                            expect(bookmark.body.description).to.eql(newBookmark.description)
-                            expect(bookmark.body.rating).to.eql(newBookmark.rating)
-                        }).then(() => done())
-                })          
-        })
-    })
-
-    ////////////////////////////////////////////////////////////////////////////////////////////
-    // TROUBLESHOOTING FOOTNOTES ///////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////
-    // From Jonathan Huxhold in Slack Tech Support:
-    // "So it seems the second test (POST) is failing because the reference to store.bookmarks is referencing the static object defined for store rather than the updated object you would expect in memory."
-    // "This ended up actually being an issue with the tests timing out as the promise wasn't being explicitly resolved so things were hanging. By calling `done()` instead of returning (ie --> return supertest(app)....) you might be able to better control the completion point of the test. I modified the second (POST) test to do a GET on the newly created bookmark rather than trying to grab it from the STORE"
-    //
-    // Post-Script Me: unfortunately I couldn't figure out how to emulate this if I swapped the order of the test suite from DELETE-then-POST (solution above) to POST-then-DELETE. As I'm out of my depth here will leave to revisit another day...
-    //
-    describe.skip('Dupes of failing tests... that shouldn\'t', () => {
-
-        // this test fill fail *IF* it's the second test in testing suite
-        it('DELETE /bookmarks/:id removes the bookmark by ID from the store', () => {
-            // console.log('test: DELETE /bookmarks/:id')
-            const secondBookmark = store.bookmarks[1]
-            const expectedBookmarks = store.bookmarks.filter(s => s.id !== secondBookmark.id)
-            return supertest(app)
-                .delete(`/bookmarks/${secondBookmark.id}`)
-                .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
-                .expect(204)
-                .then(() => {
-                    expect(store.bookmarks).to.eql(expectedBookmarks)
-                })
-        })
-
-        // ^^^^ see explanation above 
-        it('POST /bookmarks adds a new bookmark to the store', (done) => {
-            console.log('test: POST /bookmarks')
-            const newBookmark = {
-                title: 'test-title',
-                url: 'https://test.com',
-                description: 'test description',
-                rating: 1,
-            }
-            supertest(app)
-                .post(`/bookmarks`)
-                .send(newBookmark)
-                .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
-                .expect(201)
-                .expect(res => {
-                    // console.log('res.body: ', res.body)
-
-                    expect(res.body.title).to.eql(newBookmark.title)
-                    expect(res.body.url).to.eql(newBookmark.url)
-                    expect(res.body.description).to.eql(newBookmark.description)
-                    expect(res.body.rating).to.eql(newBookmark.rating)
-                    expect(res.body.id).to.be.a('string')
-                })
-                .then(res => {
-                    supertest(app)
-                        .get(`/bookmarks/${res.body.id}`)
-                        .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
-                        .expect(200)
-                        .expect(bookmark => {
-                            expect(bookmark.body.title).to.eql(newBookmark.title)
-                            expect(bookmark.body.url).to.eql(newBookmark.url)
-                            expect(bookmark.body.description).to.eql(newBookmark.description)
-                            expect(bookmark.body.rating).to.eql(newBookmark.rating)
-                        }).then(() => done())
-                })          
-        })
-
-        // this doesn't work when it's the second test in the testing suite, per the explanation above
         it('POST /bookmarks adds a new bookmark to the store', () => {
             // console.log('test: POST /bookmarks')
             const newBookmark = {
@@ -293,6 +192,98 @@ describe('Bookmark Endpoints', () => {
                 })
                 .then(res => {
                     expect(store.bookmarks[store.bookmarks.length - 1]).to.eql(res.body)
+                })
+        })
+    })
+
+
+    describe('Dupes of previously failing tests (that no longer fail thanks to Post-Script-2 solution)', () => {
+
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    // TROUBLESHOOTING FOOTNOTES ///////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////
+
+    // SITUATION (see branch: testing01_semi-failure)
+    // Previously, bookmarks.router.js was like so ...
+    // const { bookmarks } = require('../store') 
+    // and all instances of store.bookmarks in router referenced via the variable 'bookmarks'
+    //
+    // So the 2nd+ unit test in this testing suite below would fail, whether it be DELETE or POST.
+    
+    // POST-SCRIPT-2 SOLUTION!!!!!!!!!
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    // see git diff of bookmarks.router.js branches: 
+    // https://github.com/artificialarea/bookmarks-server/compare/testing01_semi-failure...testing02_success
+    //
+    // in bookmarks.router.js:
+    // 1.
+    // changed require/import of store from
+    // const { bookmarks } = require('../store')
+    // to
+    // const store = require('../store')
+    //
+    // 2.
+    // changed all instances of the variable bookmarks to store.bookmarks
+    //
+    // But *WHY* does this resolved the testing issue from earlier?
+    // Well, Anthony Koch from Slack Techncial Support explains: 
+    // "I think I got it. The POST is mutating the array by adding a bookmark onto the array, which is why these lines exist:
+    // beforeEach(() => { bookmarksCopy = store.bookmarks.slice() })
+    // afterEach(() => { store.bookmarks = bookmarksCopy })
+    // They reset the arrays back to the original items by making a new array with the same items. 
+    // However, when you access the bookmarks through a variable —— like the following require: const { bookmarks } = require('../store') —— the bookmarks variable will always reference the original array that was created when the app started up.
+    // When you access the bookmarks through the store, it will point to to the new, copied bookmarks array that you are creating in your beforeEach and afterEach.
+
+        it('DELETE /bookmarks/:id removes the bookmark by ID from the store', () => {
+            // console.log('test: DELETE /bookmarks/:id')
+            const secondBookmark = store.bookmarks[1]
+            const expectedBookmarks = store.bookmarks.filter(s => s.id !== secondBookmark.id)
+            return supertest(app)
+                .delete(`/bookmarks/${secondBookmark.id}`)
+                .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                .expect(204)
+                .then(() => {
+                    expect(store.bookmarks).to.eql(expectedBookmarks)
+                })
+        })
+
+        // previously, this test would have failed
+        it('POST /bookmarks adds a new bookmark to the store', () => {
+            // console.log('test: POST /bookmarks')
+            const newBookmark = {
+                title: 'test-title',
+                url: 'https://test.com',
+                description: 'test description',
+                rating: 1,
+            }
+            return supertest(app)
+                .post(`/bookmarks`)
+                .send(newBookmark)
+                .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                .expect(201)
+                .expect(res => {
+                    expect(res.body.title).to.eql(newBookmark.title)
+                    expect(res.body.url).to.eql(newBookmark.url)
+                    expect(res.body.description).to.eql(newBookmark.description)
+                    expect(res.body.rating).to.eql(newBookmark.rating)
+                    expect(res.body.id).to.be.a('string')
+                })
+                .then(res => {
+                    expect(store.bookmarks[store.bookmarks.length - 1]).to.eql(res.body)
+                })
+        })
+
+        // dupe of first (successful) unit test again to demonstrate that previously, this test would have failed
+        it('DELETE /bookmarks/:id removes the bookmark by ID from the store', () => {
+            // console.log('test: DELETE /bookmarks/:id')
+            const secondBookmark = store.bookmarks[1]
+            const expectedBookmarks = store.bookmarks.filter(s => s.id !== secondBookmark.id)
+            return supertest(app)
+                .delete(`/bookmarks/${secondBookmark.id}`)
+                .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                .expect(204)
+                .then(() => {
+                    expect(store.bookmarks).to.eql(expectedBookmarks)
                 })
         })
     })
