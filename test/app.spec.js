@@ -1,7 +1,7 @@
 // walkthru per: https://github.com/Thinkful-Ed/bookmarks-server/blob/trello-assignment-example-solution/test/app.spec.js
 // see also: https://jestjs.io/docs/en/setup-teardown
 
-// SEE TROUBLESHOOTING FOOTNOTES at the bottom for an issue to revisit someday !!!!!!
+// SEE TROUBLESHOOTING FOOTNOTES for solution to testing issue !!!!!!
 
 
 const app = require('../src/app')
