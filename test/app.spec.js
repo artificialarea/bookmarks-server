@@ -212,7 +212,8 @@ describe('Bookmark Endpoints', () => {
     
     // POST-SCRIPT-2 SOLUTION!!!!!!!!!
     ////////////////////////////////////////////////////////////////////////////////////////////
-    // see git diff: https://github.com/artificialarea/bookmarks-server/compare/testing01_semi-failure...testing02_success
+    // see git diff of bookmarks.router.js branches: 
+    // https://github.com/artificialarea/bookmarks-server/compare/testing01_semi-failure...testing02_success
     //
     // in bookmarks.router.js:
     // 1.
