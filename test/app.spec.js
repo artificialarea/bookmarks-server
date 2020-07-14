@@ -20,10 +20,10 @@ describe('Bookmark Endpoints', () => {
     })
 
     afterEach('restore the bookmarks', () => {
-        // console.log('store.bookmarks (at end of test): ', store.bookmarks)
+        console.log('store.bookmarks (at end of test): ', store.bookmarks)
         // restore bookmarks to original for next test
         store.bookmarks = bookmarksCopy
-        // console.log('store.bookmarks (restored to original afterEach test): ', store.bookmarks)
+        console.log('store.bookmarks (restored to original afterEach test): ', store.bookmarks)
     })
     
 
@@ -197,7 +197,7 @@ describe('Bookmark Endpoints', () => {
     })
 
 
-    describe('Dupes of previously failing tests (that no longer fail thanks to Post-Script-2 solution)', () => {
+    describe.only('Dupes of previously failing tests (that no longer fail thanks to Post-Script-2 solution)', () => {
 
     ////////////////////////////////////////////////////////////////////////////////////////////
     // TROUBLESHOOTING FOOTNOTES ///////////////////////////////////////////////////////////////
@@ -227,7 +227,7 @@ describe('Bookmark Endpoints', () => {
     //
     // But *WHY* does this resolved the testing issue from earlier?
     // Well, Anthony Koch from Slack Techncial Support explains: 
-    // "I think I got it. The POST is mutating the array by adding a bookmark onto the array, which is why these lines exist:
+    // "I think I got it. The POST and DELETE is mutating the array by adding or deleting a bookmark onto the array, respectively, which is why these lines exist:
     // beforeEach(() => { bookmarksCopy = store.bookmarks.slice() })
     // afterEach(() => { store.bookmarks = bookmarksCopy })
     // They reset the arrays back to the original items by making a new array with the same items. 
