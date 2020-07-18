@@ -21,6 +21,7 @@ const bodyParser = express.json()
 router
     .route('/')
     .get((req, res, next) => {
+        // PREVIOUSLY
         // res.json(store.bookmarks)
 
         const knexInstance = req.app.get('db')
@@ -30,7 +31,7 @@ router
                 res.json(bookmarks)
             })
             .catch(next)
-            
+
     })
     .post(bodyParser, (req, res) => {
         const { title, url, description, rating = 1 } = req.body
@@ -66,15 +67,24 @@ router
 
 router
     .route('/:id')
-    .get((req, res) => {
-        const { id } = req.params
-        const bookmark = store.bookmarks.find(b => b.id == id)
+    .get((req, res, next) => {
+        // PREVIOUSLY
+        // const { id } = req.params
+        // const bookmark = store.bookmarks.find(b => b.id == id)
 
-        if (!bookmark) {
-            logger.error(`Bookmark with id: ${id} not found`)
-            return res.status(404).send('Bookmark Not Found')
-        }
-        res.status(200).json(bookmark)
+        // if (!bookmark) {
+        //     logger.error(`Bookmark with id: ${id} not found`)
+        //     return res.status(404).send('Bookmark Not Found')
+        // }
+        // res.status(200).json(bookmark)
+
+        // res.json({ 'requested_id': req.params.bookmarks_id, this: 'should fail'})
+        const knexInstance = req.app.get('db')
+        BookmarksService.getById(knexInstance, req.params.bookmark_id)
+            .then(bookmark => {
+                res.json(bookmark)
+            })
+            .catch(next)
     })
     .delete((req, res) => {
         const { id } = req.params

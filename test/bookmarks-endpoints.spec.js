@@ -17,7 +17,8 @@ describe.only('Bookmark Endpoints', () => {
 
     after('disconnect from db', () => db.destroy());
 
-    before('clean the table', () => db('bookmarks').truncate())
+    before('clean the table', () => db('bookmarks').truncate());
+    afterEach('cleanup', () => db('bookmarks').truncate());
 
     context('Given there are bookmarks in the database', () => {
 
@@ -58,8 +59,17 @@ describe.only('Bookmark Endpoints', () => {
                 .expect(200, testBookmarks)
         
         });
-    })
 
+        it(`GET /bookmarks/:bookmark_id responds with 200 and the specified bookmark`, () => {
+            const bookmarkId = 3;
+            const expectedBookmark = testBookmarks[bookmarkId - 1];
+            // console.log(expectedBookmark)
+            return supertest(app)
+                .get(`/bookmarks/${bookmarkId}`)
+                .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                .expect(200, expectedBookmark)
+        });
 
+    });
 
 });
