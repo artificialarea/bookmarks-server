@@ -197,7 +197,7 @@ describe('Bookmark Endpoints', () => {
     })
 
 
-    describe.only('Dupes of previously failing tests (that no longer fail thanks to Post-Script-2 solution)', () => {
+    describe('Dupes of previously failing tests (that no longer fail thanks to Post-Script-2 solution)', () => {
 
     ////////////////////////////////////////////////////////////////////////////////////////////
     // TROUBLESHOOTING FOOTNOTES ///////////////////////////////////////////////////////////////

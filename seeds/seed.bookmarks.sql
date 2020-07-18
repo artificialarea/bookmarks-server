@@ -13,3 +13,4 @@ VALUES
 ;
 
 -- then $ psql -U dunder_mifflin -d bookmarks -f ./seeds/seed.bookmarks.sql
+-- then $ psql -U dunder_mifflin -d bookmarks-test -f ./seeds/seed.bookmarks.sql
