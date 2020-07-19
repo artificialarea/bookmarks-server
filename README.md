@@ -22,4 +22,4 @@ _... plus associated branch 'test-to-fail' for git diff purposes._
 
 **[thinkful solution...](https://github.com/Thinkful-Ed/bookmarks-server/tree/trello-assignment-example-solution)**
 
-:boom::sweat_drops::confused:&nbsp; **[SEE TROUBLESHOOTING SOLUTION FOOTNOTES HERE...](https://github.com/artificialarea/bookmarks-server/blob/checkpoint-10/test/app.spec.js)** :shit:
+:boom:&nbsp;:sweat_drops:&nbsp;:confused:&nbsp; **[SEE TROUBLESHOOTING SOLUTION FOOTNOTES HERE...](https://github.com/artificialarea/bookmarks-server/blob/checkpoint-10/test/app.spec.js)** :shit:
