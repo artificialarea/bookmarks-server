@@ -3,7 +3,7 @@ const knex = require('knex');
 const app = require('../src/app');
 const supertest = require('supertest');
 
-describe.only('Bookmark Endpoints', () => {
+describe.only('Bookmark Endpoints (bookmarks-endpoints-spec.js)', () => {
 
     let db;
 
@@ -20,7 +20,7 @@ describe.only('Bookmark Endpoints', () => {
     before('clean the table', () => db('bookmarks').truncate());
     afterEach('cleanup', () => db('bookmarks').truncate());
 
-    context('Given there are bookmarks in the database', () => {
+    context(`Given 'bookmarks' database and table has data`, () => {
 
         let testBookmarks = [
             {
@@ -70,6 +70,31 @@ describe.only('Bookmark Endpoints', () => {
                 .expect(200, expectedBookmark)
         });
 
+        it(`GET /bookmarks/:id responds 404 when bookmark doesn't exist`, () => {
+            return supertest(app)
+                .get(`/bookmarks/123`)
+                .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                .expect(404, `Bookmark Not Found`)
+        })
+
     });
+
+    context(`Given no bookmarks in database`, () => {
+
+        it(`GET /bookmarks responds with 200 and an empty list`, () => {
+            return supertest(app)
+                .get(`/bookmarks`)
+                .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                .expect(200, [])
+        });
+
+        it(`GET /bookmarks/:id responds 404 when bookmark doesn't exist`, () => {
+            return supertest(app)
+                .get(`/bookmarks/123`)
+                .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                .expect(404, `Bookmark Not Found`)
+        })
+    })
+
 
 });

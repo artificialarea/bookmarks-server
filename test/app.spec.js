@@ -8,7 +8,7 @@ const app = require('../src/app')
 const store = require('../src/store')
 
 
-describe('Bookmark Endpoints', () => {
+describe('Bookmark Endpoints (app.spec.js)', () => {
     // Pre-tests: Cyclical Setup and Teardown of store.bookmarks 
 
     let bookmarksCopy
@@ -20,10 +20,10 @@ describe('Bookmark Endpoints', () => {
     })
 
     afterEach('restore the bookmarks', () => {
-        console.log('store.bookmarks (at end of test): ', store.bookmarks)
+        // console.log('store.bookmarks (at end of test): ', store.bookmarks)
         // restore bookmarks to original for next test
         store.bookmarks = bookmarksCopy
-        console.log('store.bookmarks (restored to original afterEach test): ', store.bookmarks)
+        // console.log('store.bookmarks (restored to original afterEach test): ', store.bookmarks)
     })
     
 
@@ -56,7 +56,7 @@ describe('Bookmark Endpoints', () => {
         })
     })
 
-    describe('GET /bookmarks', () => {
+    describe.skip('GET /bookmarks', () => { // REPLACED BY DB version
         it('gets the bookmarks from the store', () => {
             return supertest(app)
                 .get('/bookmarks')
@@ -65,7 +65,7 @@ describe('Bookmark Endpoints', () => {
         })
     })
 
-    describe('GET /bookmarks/:id', () => {
+    describe.skip('GET /bookmarks/:id', () => {     // REPLACED BY DB version
         it('gets the bookmark by ID from the store', () => {
             const secondBookmark = store.bookmarks[1]
             return supertest(app)
@@ -197,7 +197,7 @@ describe('Bookmark Endpoints', () => {
     })
 
 
-    describe('Dupes of previously failing tests (that no longer fail thanks to Post-Script-2 solution)', () => {
+    describe.skip('Dupes of previously failing tests (that no longer fail thanks to Post-Script-2 solution)', () => {
 
     ////////////////////////////////////////////////////////////////////////////////////////////
     // TROUBLESHOOTING FOOTNOTES ///////////////////////////////////////////////////////////////

@@ -68,7 +68,8 @@ router
     .get((req, res, next) => {
         // res.json({ 'requested_id': req.params.bookmarks_id, this: 'should fail'})
         const knexInstance = req.app.get('db')
-        BookmarksService.getById(knexInstance, req.params.id)
+        const { id } = req.params
+        BookmarksService.getById(knexInstance, id)
             .then(bookmark => {
                 if (!bookmark) {
                     logger.error(`Bookmark with id ${id} not found.`)
