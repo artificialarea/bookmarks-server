@@ -10,6 +10,8 @@ per: https://courses.thinkful.com/node-postgres-v1/checkpoint/15#assignment
 
 **branch: master**
 
+thinkful solution: https://github.com/Thinkful-Ed/bookmarks-server/tree/db-with-express-example-solution
+
 <br />
 
 ## Checkpoint 10 assignment
