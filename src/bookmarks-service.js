@@ -8,7 +8,7 @@ const BookmarksService = {
             .from('bookmarks')
             .select('*')
             .where({ id })
-            // .first()
+            .first()
     },
 
 };

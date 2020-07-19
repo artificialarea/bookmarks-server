@@ -68,7 +68,7 @@ router
 router
     .route('/:id')
     .get((req, res, next) => {
-        // PREVIOUSLY
+        // PREVIOUSLY (with in-memory storage + route('/:id') instead of route(':/bookmark_id') )
         // const { id } = req.params
         // const bookmark = store.bookmarks.find(b => b.id == id)
 
@@ -80,8 +80,14 @@ router
 
         // res.json({ 'requested_id': req.params.bookmarks_id, this: 'should fail'})
         const knexInstance = req.app.get('db')
-        BookmarksService.getById(knexInstance, req.params.bookmark_id)
+        BookmarksService.getById(knexInstance, req.params.id)
             .then(bookmark => {
+                if (!bookmark) {
+                    logger.error(`Bookmark with id ${id} not found.`)
+                    return res.status(404).json({
+                      error: { message: `Bookmark Not Found` }
+                    })
+                  }
                 res.json(bookmark)
             })
             .catch(next)

@@ -60,7 +60,7 @@ describe.only('Bookmark Endpoints', () => {
         
         });
 
-        it(`GET /bookmarks/:bookmark_id responds with 200 and the specified bookmark`, () => {
+        it(`GET /bookmarks/:id responds with 200 and the specified bookmark`, () => {
             const bookmarkId = 3;
             const expectedBookmark = testBookmarks[bookmarkId - 1];
             // console.log(expectedBookmark)
