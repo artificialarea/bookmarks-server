@@ -15,17 +15,15 @@ const knexInstance = knex({
 const router = express.Router()
 const bodyParser = express.json()
 
-
-
+// NOTE 
+// at this stage of this assignment, app will be using a mix of both the database and in-memory JavaScript storage.
+// GET requests refactored to fetch from bookmarks database
+// POST, DELETE remain associated with store.bookmarks for now.
 
 router
     .route('/')
     .get((req, res, next) => {
-        // PREVIOUSLY
-        // res.json(store.bookmarks)
-
         const knexInstance = req.app.get('db')
-
         BookmarksService.getAllBookmarks(knexInstance)
             .then(bookmarks => {
                 res.json(bookmarks)
@@ -68,25 +66,13 @@ router
 router
     .route('/:id')
     .get((req, res, next) => {
-        // PREVIOUSLY (with in-memory storage + route('/:id') instead of route(':/bookmark_id') )
-        // const { id } = req.params
-        // const bookmark = store.bookmarks.find(b => b.id == id)
-
-        // if (!bookmark) {
-        //     logger.error(`Bookmark with id: ${id} not found`)
-        //     return res.status(404).send('Bookmark Not Found')
-        // }
-        // res.status(200).json(bookmark)
-
         // res.json({ 'requested_id': req.params.bookmarks_id, this: 'should fail'})
         const knexInstance = req.app.get('db')
         BookmarksService.getById(knexInstance, req.params.id)
             .then(bookmark => {
                 if (!bookmark) {
                     logger.error(`Bookmark with id ${id} not found.`)
-                    return res.status(404).json({
-                      error: { message: `Bookmark Not Found` }
-                    })
+                    return res.status(404).send('Bookmark Not Found')
                   }
                 res.json(bookmark)
             })
