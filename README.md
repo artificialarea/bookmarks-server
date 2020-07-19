@@ -8,7 +8,7 @@
 
 per: https://courses.thinkful.com/node-postgres-v1/checkpoint/15#assignment
 
-**branch: master**
+**branch: checkpoint-15**
 
 **[thinkful solution...](https://github.com/Thinkful-Ed/bookmarks-server/tree/db-with-express-example-solution)**
 
