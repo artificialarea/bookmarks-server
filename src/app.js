@@ -8,7 +8,7 @@ const errorHandlerFourOhFour = require('./middleware/error-handler-four-oh-four'
 const errorHandler = require('./middleware/error-handler')
 
 const { NODE_ENV } = require('./config')
-const bookmarksRouter = require('./routes/bookmarks.router')
+const bookmarksRouter = require('./bookmarks/bookmarks.router')
 
 const app = express()
 

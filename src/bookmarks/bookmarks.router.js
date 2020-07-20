@@ -5,7 +5,7 @@ const logger = require('../middleware/logger')
 const store = require('../store')
 
 const knex = require('knex')
-const BookmarksService = require('../bookmarks-service')
+const BookmarksService = require('./bookmarks-service')
 
 const knexInstance = knex({
     client: 'pg',
