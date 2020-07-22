@@ -256,11 +256,15 @@ describe.only('Bookmark Endpoints (bookmarks-endpoints-spec.js)', () => {
                     expect(res.body.url).to.eql(newBookmark.url)
                     expect(res.body.description).to.eql(newBookmark.description)
                     expect(res.body.rating).to.eql(newBookmark.rating)
-                    expect(res.body.id).to.be.a('string')
+                    expect(res.body.id).to.be.a('number')
+                    expect(res.headers.location).to.eql(`/bookmarks/${res.body.id}`)
                 })
-                .then(res => {
-                    expect(store.bookmarks[store.bookmarks.length - 1]).to.eql(res.body)
-                })
+                // .then(postRes => {
+                //     // expect(store.bookmarks[store.bookmarks.length - 1]).to.eql(res.body)
+                //     return supertest(app)
+                //         .get(`/bookmarks/${postRes.body.id}`)
+                //         .expect(postRes.body)
+                // })
         });
     });
 

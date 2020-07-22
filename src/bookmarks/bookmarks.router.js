@@ -31,8 +31,10 @@ router
             .catch(next)
 
     })
-    .post(bodyParser, (req, res) => {
-        const { title, url, description, rating = 1 } = req.body
+    .post(bodyParser, (req, res, next) => {
+        const knexInstance = req.app.get('db')
+        const { title, url, description, rating } = req.body
+        const newBookmark = { title, url, description, rating }
 
         if (!title) {
             return res.status(400).send(`'title' is required`)
@@ -44,22 +46,17 @@ router
             return res.status(400).send(`'rating' is required`)
         }
 
-        const id = uuid();
-        const bookmark = {
-            id,
-            title,
-            url,
-            description,
-            rating
-        }
-        store.bookmarks.push(bookmark)
-        logger.info(`Bookmark with id: ${id} created.`)
-
-        // res.status(204).end()
-        res
-            .status(201)
-            .location(`http//localhost:8000/store.bookmarks/${id}`)
-            .json(bookmark)
+        BookmarksService.insertBookmark(
+            knexInstance,
+            newBookmark
+        )
+            .then(bookmark => {
+                console.log('bookmark: ', bookmark)
+                res .status(201)
+                    .location(`/bookmarks/${bookmark.id}`)
+                    .json(bookmark)
+            })
+            .catch(next)
     })
 
 

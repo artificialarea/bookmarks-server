@@ -11,11 +11,14 @@ const BookmarksService = {
             .first()
     },
     insertBookmark(knex, newBookmark) {
+        console.log('newBookmark: ', newBookmark)
         return knex
             .insert(newBookmark)
             .into('bookmarks')
             .returning('*')
-            .then(rows => { rows[0]})
+            .then(rows => {
+                return rows[0]
+            })
     },
     deleteBookmark(knex, id) {
         return knex
