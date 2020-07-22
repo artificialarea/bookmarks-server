@@ -256,15 +256,17 @@ describe.only('Bookmark Endpoints (bookmarks-endpoints-spec.js)', () => {
                     expect(res.body.url).to.eql(newBookmark.url)
                     expect(res.body.description).to.eql(newBookmark.description)
                     expect(res.body.rating).to.eql(newBookmark.rating)
+                    // expect(res.body).to.have.property('id')
                     expect(res.body.id).to.be.a('number')
                     expect(res.headers.location).to.eql(`/bookmarks/${res.body.id}`)
                 })
-                // .then(postRes => {
-                //     // expect(store.bookmarks[store.bookmarks.length - 1]).to.eql(res.body)
-                //     return supertest(app)
-                //         .get(`/bookmarks/${postRes.body.id}`)
-                //         .expect(postRes.body)
-                // })
+                .then(postRes => {
+                    console.log('postRes: ', postRes.body)
+                    return supertest(app)
+                        .get(`/bookmarks/${postRes.body.id}`)
+                        .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                        .expect(postRes.body)
+                })
         });
     });
 

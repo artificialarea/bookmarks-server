@@ -42,16 +42,13 @@ router
         if (!url) {
             return res.status(400).send(`'url' is required`)
         }
-        if (!description) {
+        if (!rating) {
             return res.status(400).send(`'rating' is required`)
         }
 
-        BookmarksService.insertBookmark(
-            knexInstance,
-            newBookmark
-        )
+        BookmarksService.insertBookmark(knexInstance, newBookmark)
             .then(bookmark => {
-                console.log('bookmark: ', bookmark)
+                // console.log('bookmark: ', bookmark)
                 res .status(201)
                     .location(`/bookmarks/${bookmark.id}`)
                     .json(bookmark)
