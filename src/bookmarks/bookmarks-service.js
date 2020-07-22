@@ -25,11 +25,6 @@ const BookmarksService = {
             .from('bookmarks')
             .where({ id })
             .delete()
-            // .then(
-            //     console.log('required?')
-            // )
-            // ^^^^ Why .then() ? 
-            // See FOOTNOTES in earlier repo: https://github.com/artificialarea/knex-practice/blob/master/src/blogful.js
     },
     updateBookmark(knex, id, newBookmarkFields) {
         return knex
