@@ -36,14 +36,13 @@ router
         const { title, url, description, rating } = req.body
         const newBookmark = { title, url, description, rating }
 
-        if (!title) {
-            return res.status(400).send(`'title' is required`)
-        }
-        if (!url) {
-            return res.status(400).send(`'url' is required`)
-        }
-        if (!rating) {
-            return res.status(400).send(`'rating' is required`)
+        // DRY (don't repeat yourself) validation logic
+        for (const [key, value] of Object.entries(newBookmark)) {
+            if (value == null && key !== 'description') {
+                return res.status(400).json({
+                    error: { message: `'${key}' is required`}
+                })
+            }
         }
 
         BookmarksService.insertBookmark(knexInstance, newBookmark)

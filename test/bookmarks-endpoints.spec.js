@@ -173,45 +173,6 @@ describe.only('Bookmark Endpoints (bookmarks-endpoints-spec.js)', () => {
 
     describe('POST /bookmarks', () => {
 
-        it(`responds with 400 missing 'title' if not supplied`, () => {
-            const newBookmarkMissingTitle = {
-                // title: 'test-title',
-                url: 'https://test.com',
-                rating: 1,
-            };
-            return supertest(app)
-                .post(`/bookmarks`)
-                .send(newBookmarkMissingTitle)
-                .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
-                .expect(400, `'title' is required`)
-        });
-
-        it(`responds with 400 missing 'url' if not supplied`, () => {
-            const newBookmarkMissingUrl = {
-                title: 'test-title',
-                // url: 'https://test.com',
-                rating: 1,
-            };
-            return supertest(app)
-                .post(`/bookmarks`)
-                .send(newBookmarkMissingUrl)
-                .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
-                .expect(400, `'url' is required`)
-        });
-
-        it(`responds with 400 missing 'rating' if not supplied`, () => {
-            const newBookmarkMissingRating = {
-                title: 'test-title',
-                url: 'https://test.com',
-                // rating: 1,
-            };
-            return supertest(app)
-                .post(`/bookmarks`)
-                .send(newBookmarkMissingRating)
-                .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
-                .expect(400, `'rating' is required`)
-        });
-
         it.skip(`responds with 400 invalid 'rating' if not between 0 and 5`, () => {
             const newBookmarkInvalidRating = {
                 title: 'test-title',
@@ -268,6 +229,29 @@ describe.only('Bookmark Endpoints (bookmarks-endpoints-spec.js)', () => {
                         .expect(postRes.body)
                 })
         });
+
+        // DRY (don't repeat yourself) REFACTOR of validation tests
+        const requiredFields = ['title', 'url', 'rating'];
+        requiredFields.forEach(field => {
+            const newBookmark = {
+                title: 'test-title',
+                url: 'https://test.com',
+                rating: 1,
+            };
+
+            it(`responds with 400 and an error message when the '${field}' is missing`, () => {
+                delete newBookmark[field]
+
+                return supertest(app)
+                    .post('/bookmarks')
+                    .send(newBookmark)
+                    .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                    .expect(400, {
+                        error: { message: `'${field}' is required`}
+                    })
+            });
+
+        })
     });
 
 
