@@ -4,19 +4,10 @@ const app = require('../src/app');
 const supertest = require('supertest');
 const fixtures = require('./bookmarks.fixtures');
 
-const store = require('../src/store') // TODO: remove when updating POST and DELETE to database
-// NOTE 
-// at this stage of this assignment, app will be using a mix of both the database and in-memory JavaScript storage.
-// GET requests refactored to fetch from bookmarks database
-// POST, DELETE remain associated with store.bookmarks for now.
-
-// NOTE2: SEE TROUBLESHOOTING FOOTNOTES in describe.skip('Dupes...') for solution to odd testing issue with Mocha Hooks !!!!!!
-
 
 describe.only('Bookmark Endpoints (bookmarks-endpoints-spec.js)', () => {
 
     let db;
-    let bookmarksCopy; // TODO: refactor to use 'db' when updating POST and DELETE
 
     before('make knex instance', () => {
         db = knex({
@@ -30,17 +21,6 @@ describe.only('Bookmark Endpoints (bookmarks-endpoints-spec.js)', () => {
 
     before('clean the table', () => db('bookmarks').truncate());
     afterEach('cleanup', () => db('bookmarks').truncate());
-
-    // TODO: refactor to use db when updating POST and DELETE
-    beforeEach('copy the bookmarks', () => {
-        // copy the bookmarks so we can restore them after testing
-        bookmarksCopy = store.bookmarks.slice();
-    });
-    // TODO: refactor to use db when updating POST and DELETE
-    afterEach('restore the bookmarks', () => {
-        // restore the bookmarks back to original
-        store.bookmarks = bookmarksCopy;
-    });
 
 
     describe('Unauthorized requests', () => {
@@ -59,20 +39,21 @@ describe.only('Bookmark Endpoints (bookmarks-endpoints-spec.js)', () => {
         });
 
         it(`responds with 401 Unauthorized for GET /bookmarks/:id`, () => {
-            const secondBookmark = store.bookmarks[1];
+            const testBookmarks = fixtures.makeBookmarksArray();
+            const secondBookmark = testBookmarks[1];
             return supertest(app)
                 .get(`/bookmarks/${secondBookmark.id}`)
                 .expect(401, { error: 'Unauthorized request' })
         });
 
         it(`responds with 401 Unauthorized for DELETE /bookmarks/:id`, () => {
-            const aBookmark = store.bookmarks[1];
+            const testBookmarks = fixtures.makeBookmarksArray();
+            const secondBookmark = testBookmarks[1];
             return supertest(app)
-                .delete(`/bookmarks/${aBookmark.id}`)
+                .delete(`/bookmarks/${secondBookmark.id}`)
                 .expect(401, { error: 'Unauthorized request' })
         });
     });
-
 
     describe(`GET /bookmarks`, () => {
 
@@ -148,27 +129,44 @@ describe.only('Bookmark Endpoints (bookmarks-endpoints-spec.js)', () => {
 
     });
 
-
     describe('DELETE /bookmarks/:id', () => {
 
-        it.skip('removes the bookmark by ID from the store', () => {
-            const secondBookmark = store.bookmarks[1];
-            const expectedBookmarks = store.bookmarks.filter(s => s.id !== secondBookmark.id);
-            return supertest(app)
-                .delete(`/bookmarks/${secondBookmark.id}`)
-                .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
-                .expect(204)
-                .then(() => {
-                    expect(store.bookmarks).to.eql(expectedBookmarks)
-                })
+        context(`Given there are bookmarks in the database`, () => {
+
+            const testBookmarks = fixtures.makeBookmarksArray();
+
+            beforeEach(`insert bookmarks`, () => {
+                return db
+                    .into('bookmarks')
+                    .insert(testBookmarks)
+            })
+        
+            it('responds with 204 and removes bookmark', () => {
+                const idToRemove = 2;
+                const expectedBookmarks = testBookmarks.filter(b => b.id !== idToRemove);
+                return supertest(app)
+                    .delete(`/bookmarks/${idToRemove}`)
+                    .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                    .expect(204)
+                    .then(res => {
+                        return supertest(app)
+                            .get(`/bookmarks`)
+                            .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                            .expect(expectedBookmarks)
+                    })
+            });
         });
 
-        it(`returns 404 when bookmark doesn't exist`, () => {
-            return supertest(app)
-                .delete(`/bookmarks/doesnt-exist`)
+        context(`Given no articles`, () => {
+            
+            it(`responds with 404`, () => {
+                return supertest(app)
+                .delete(`/bookmarks/123456`)
                 .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
                 .expect(404, 'Bookmark Not Found')
-        });
+            });
+
+        })
     });
 
     describe('POST /bookmarks', () => {
@@ -200,7 +198,6 @@ describe.only('Bookmark Endpoints (bookmarks-endpoints-spec.js)', () => {
         });
 
         it('creates a new bookmark, responding with 201 and the new bookmark', () => {
-            // console.log('test: POST /bookmarks')
             const newBookmark = {
                 title: 'test-title',
                 url: 'https://test.com',
@@ -222,7 +219,6 @@ describe.only('Bookmark Endpoints (bookmarks-endpoints-spec.js)', () => {
                     expect(res.headers.location).to.eql(`/bookmarks/${res.body.id}`)
                 })
                 .then(postRes => {
-                    console.log('postRes: ', postRes.body)
                     return supertest(app)
                         .get(`/bookmarks/${postRes.body.id}`)
                         .set('Authorization', `Bearer ${process.env.API_TOKEN}`)

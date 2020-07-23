@@ -1,24 +1,12 @@
 require('dotenv').config()
 const express = require('express')
-const { v4: uuid } = require('uuid')
 const logger = require('../middleware/logger')
-const store = require('../store')
 
 const knex = require('knex')
 const BookmarksService = require('./bookmarks-service')
 
-const knexInstance = knex({
-    client: 'pg',
-    connection: process.env.DB_URL,
-})
-
 const router = express.Router()
 const bodyParser = express.json()
-
-// NOTE 
-// at this stage of this assignment, app will be using a mix of both the database and in-memory JavaScript storage.
-// GET requests refactored to fetch from bookmarks database
-// POST, DELETE remain associated with store.bookmarks for now.
 
 router
     .route('/')
@@ -47,7 +35,6 @@ router
 
         BookmarksService.insertBookmark(knexInstance, newBookmark)
             .then(bookmark => {
-                // console.log('bookmark: ', bookmark)
                 res .status(201)
                     .location(`/bookmarks/${bookmark.id}`)
                     .json(bookmark)
@@ -59,9 +46,8 @@ router
 router
     .route('/:id')
     .get((req, res, next) => {
-        // res.json({ 'requested_id': req.params.bookmarks_id, this: 'should fail'})
-        const knexInstance = req.app.get('db')
-        const { id } = req.params
+        const knexInstance = req.app.get('db');
+        const { id } = req.params;
         BookmarksService.getById(knexInstance, id)
             .then(bookmark => {
                 if (!bookmark) {
@@ -72,17 +58,18 @@ router
             })
             .catch(next)
     })
-    .delete((req, res) => {
-        const { id } = req.params
-        const bookmarkIndex = store.bookmarks.findIndex(b => b.id == id)
-
-        if (bookmarkIndex === -1) {
-            logger.error(`Bookmark with id: ${id} not found`)
-            return res.status(404).send('Bookmark Not Found')
-        }
-        store.bookmarks.splice(bookmarkIndex, 1)
-        logger.info(`Bookmark with id: ${id} deleted`)
-        res.status(204).end()
+    .delete((req, res, next) => {
+        const knexInstance = req.app.get('db');
+        const { id } = req.params;
+        BookmarksService.deleteBookmark(knexInstance, id)
+            .then(bookmark => {
+                if (!bookmark) {
+                    logger.error(`Bookmark with id ${id} not found.`)
+                    return res.status(404).send('Bookmark Not Found')
+                }
+                res.status(204).end()
+            })
+            .catch(next)
     })
 
 
