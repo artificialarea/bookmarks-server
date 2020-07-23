@@ -1,5 +1,6 @@
 require('dotenv').config()
 const express = require('express')
+const xss = require('xss');
 const { isWebUri } = require('valid-url')
 const logger = require('../middleware/logger')
 
@@ -9,13 +10,21 @@ const BookmarksService = require('./bookmarks-service')
 const router = express.Router()
 const bodyParser = express.json()
 
+const serializeBookmark = bookmark => ({
+    id: bookmark.id,
+    title: xss(bookmark.title),
+    url: bookmark.url,
+    description: xss(bookmark.description),
+    rating: Number(bookmark.rating),
+})
+
 router
     .route('/')
     .get((req, res, next) => {
         const knexInstance = req.app.get('db')
         BookmarksService.getAllBookmarks(knexInstance)
             .then(bookmarks => {
-                res.json(bookmarks)
+                res.json(bookmarks.map(serializeBookmark))
             })
             .catch(next)
 
@@ -47,7 +56,7 @@ router
             .then(bookmark => {
                 res .status(201)
                     .location(`/bookmarks/${bookmark.id}`)
-                    .json(bookmark)
+                    .json(serializeBookmark(bookmark))
             })
             .catch(next)
     })
@@ -74,7 +83,7 @@ router
 
     })
     .get((req, res, next) => {
-        res.json(res.bookmark)
+        res.json(serializeBookmark(res.bookmark))
     })
     .delete((req, res, next) => {
         BookmarksService.deleteBookmark(

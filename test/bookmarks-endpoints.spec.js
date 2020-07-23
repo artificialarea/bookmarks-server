@@ -84,6 +84,28 @@ describe.only('Bookmark Endpoints (bookmarks-endpoints-spec.js)', () => {
                     .expect(200, [])
             });
         });
+
+        context(`Given an XSS attack bookmark`, () => {
+            const { maliciousBookmark, expectedBookmark } = fixtures.makeMaliciousBookmark();
+
+            beforeEach('insert malicious bookmark', () => {
+                return db
+                    .into('bookmarks')
+                    .insert(maliciousBookmark)
+            })
+
+            it(`removes XSS attack content`, () => {
+                return supertest(app)
+                    .get(`/bookmarks`)
+                    .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                    .expect(200)
+                    .expect(res => {
+                        expect(res.body[0].title).to.eql(expectedBookmark.title)
+                        expect(res.body[0].description).to.eql(expectedBookmark.description)
+                    })
+            })
+        });
+
     
     });
 
@@ -102,7 +124,6 @@ describe.only('Bookmark Endpoints (bookmarks-endpoints-spec.js)', () => {
             it(`responds with 200 and the specified bookmark`, () => {
                 const bookmarkId = 3;
                 const expectedBookmark = testBookmarks[bookmarkId - 1];
-                // console.log(expectedBookmark)
                 return supertest(app)
                     .get(`/bookmarks/${bookmarkId}`)
                     .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
@@ -127,6 +148,27 @@ describe.only('Bookmark Endpoints (bookmarks-endpoints-spec.js)', () => {
             });
         });
 
+        context(`Given an XSS attack bookmark`, () => {
+            const { maliciousBookmark, expectedBookmark } = fixtures.makeMaliciousBookmark();
+
+            beforeEach('insert malicious bookmark', () => {
+                return db
+                    .into('bookmarks')
+                    .insert(maliciousBookmark)
+            })
+
+            it(`removes XSS attack content`, () => {
+                return supertest(app)
+                    .get(`/bookmarks/${maliciousBookmark.id}`)
+                    .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                    .expect(200)
+                    .expect(res => {
+                        expect(res.body.title).to.eql(expectedBookmark.title)
+                        expect(res.body.description).to.eql(expectedBookmark.description)
+                    })
+            })
+        });
+        
     });
 
     describe('DELETE /bookmarks/:id', () => {
@@ -169,7 +211,7 @@ describe.only('Bookmark Endpoints (bookmarks-endpoints-spec.js)', () => {
         })
     });
 
-    describe.only('POST /bookmarks', () => {
+    describe('POST /bookmarks', () => {
 
         it(`responds with 400 invalid 'rating' if not between 0 and 5`, () => {
             const newBookmarkInvalidRating = {
@@ -248,6 +290,23 @@ describe.only('Bookmark Endpoints (bookmarks-endpoints-spec.js)', () => {
             });
 
         })
+
+        context(`Given an XSS attack bookmark`, () => {
+            const { maliciousBookmark, expectedBookmark } = fixtures.makeMaliciousBookmark();
+
+            it(`removes XSS attack content from response`, () => {
+                return supertest(app)
+                    .post(`/bookmarks`)
+                    .send(maliciousBookmark)
+                    .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                    .expect(201)
+                    .expect(res => {
+                        expect(res.body.title).to.eql(expectedBookmark.title)
+                        expect(res.body.description).to.eql(expectedBookmark.description)
+                    })
+            })
+        });
+        
     });
 
 });
