@@ -45,28 +45,33 @@ router
 
 router
     .route('/:id')
-    .get((req, res, next) => {
+    .all((req, res, next) => {
         const knexInstance = req.app.get('db');
         const { id } = req.params;
         BookmarksService.getById(knexInstance, id)
             .then(bookmark => {
                 if (!bookmark) {
                     logger.error(`Bookmark with id ${id} not found.`)
-                    return res.status(404).send('Bookmark Not Found')
+                    return res.status(404).json({
+                        error: { message: `Bookmark Not Found`}
+                    })
                   }
-                res.json(bookmark)
+                
+                res.bookmark = bookmark // save the bookmark for the next middleware test
+                next() // don't forget to  call next so the next middleware test happens!
             })
             .catch(next)
+
+    })
+    .get((req, res, next) => {
+        res.json(res.bookmark)
     })
     .delete((req, res, next) => {
-        const knexInstance = req.app.get('db');
-        const { id } = req.params;
-        BookmarksService.deleteBookmark(knexInstance, id)
-            .then(bookmark => {
-                if (!bookmark) {
-                    logger.error(`Bookmark with id ${id} not found.`)
-                    return res.status(404).send('Bookmark Not Found')
-                }
+        BookmarksService.deleteBookmark(
+            req.app.get('db'), 
+            req.params.id
+        )
+            .then(() => {
                 res.status(204).end()
             })
             .catch(next)

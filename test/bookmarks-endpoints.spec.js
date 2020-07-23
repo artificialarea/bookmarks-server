@@ -113,7 +113,7 @@ describe.only('Bookmark Endpoints (bookmarks-endpoints-spec.js)', () => {
                 return supertest(app)
                     .get(`/bookmarks/123`)
                     .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
-                    .expect(404, `Bookmark Not Found`)
+                    .expect(404, { error: { message: `Bookmark Not Found`} })
             });
         });
 
@@ -123,7 +123,7 @@ describe.only('Bookmark Endpoints (bookmarks-endpoints-spec.js)', () => {
                 return supertest(app)
                     .get(`/bookmarks/123`)
                     .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
-                    .expect(404, `Bookmark Not Found`)
+                    .expect(404, { error: { message: `Bookmark Not Found`} })
             });
         });
 
@@ -163,7 +163,7 @@ describe.only('Bookmark Endpoints (bookmarks-endpoints-spec.js)', () => {
                 return supertest(app)
                 .delete(`/bookmarks/123456`)
                 .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
-                .expect(404, 'Bookmark Not Found')
+                .expect(404, { error: { message: `Bookmark Not Found`} })
             });
 
         })
