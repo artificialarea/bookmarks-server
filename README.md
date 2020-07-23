@@ -4,6 +4,18 @@
 
 <br />
 
+## Checkpoint 17 assignment
+
+per: https://courses.thinkful.com/node-postgres-v1/checkpoint/17#assignment
+
+**branch: master**
+
+**[Thinkful solutions...](https://courses.thinkful.com/node-postgres-v1/checkpoint/17#solution)**
+
+
+<br />
+
+
 ## Checkpoint 16 assignment
 
 per: https://courses.thinkful.com/node-postgres-v1/checkpoint/16#assignment
