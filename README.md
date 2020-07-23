@@ -8,7 +8,7 @@
 
 per: https://courses.thinkful.com/node-postgres-v1/checkpoint/16#assignment
 
-**branch: master**
+**branch: checkpoint-16**
 
 **[thinkful solution...](https://github.com/Thinkful-Ed/bookmarks-server/tree/post-delete-postgres-example-solution)**
 
