@@ -169,9 +169,9 @@ describe.only('Bookmark Endpoints (bookmarks-endpoints-spec.js)', () => {
         })
     });
 
-    describe('POST /bookmarks', () => {
+    describe.only('POST /bookmarks', () => {
 
-        it.skip(`responds with 400 invalid 'rating' if not between 0 and 5`, () => {
+        it(`responds with 400 invalid 'rating' if not between 0 and 5`, () => {
             const newBookmarkInvalidRating = {
                 title: 'test-title',
                 url: 'https://test.com',
@@ -184,7 +184,7 @@ describe.only('Bookmark Endpoints (bookmarks-endpoints-spec.js)', () => {
                 .expect(400, `'rating' must be a number between 0 and 5`)
         });
 
-        it.skip(`responds with 400 invalid 'url' if not a valid URL`, () => {
+        it(`responds with 400 invalid 'url' if not a valid URL`, () => {
             const newBookmarkInvalidUrl = {
                 title: 'test-title',
                 url: 'htp://invalid-url',
