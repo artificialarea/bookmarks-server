@@ -30,9 +30,9 @@ router
 
     })
     .post(bodyParser, (req, res, next) => {
-        const knexInstance = req.app.get('db')
-        const { title, url, description, rating } = req.body
-        const newBookmark = { title, url, description, rating }
+        const knexInstance = req.app.get('db');
+        const { title, url, description, rating } = req.body;
+        const newBookmark = { title, url, description, rating };
 
         // DRY (don't repeat yourself) validation logic
         for (const [key, value] of Object.entries(newBookmark)) {
@@ -89,6 +89,20 @@ router
         BookmarksService.deleteBookmark(
             req.app.get('db'), 
             req.params.id
+        )
+            .then(() => {
+                res.status(204).end()
+            })
+            .catch(next)
+    })
+    .patch(bodyParser, (req, res, next) => {
+        const { title, url, description, rating } = req.body;
+        const bookmarkToUpdate = { title, url, description, rating };
+        
+        BookmarksService.updateBookmark(
+            req.app.get('db'),
+            req.params.id,
+            bookmarkToUpdate
         )
             .then(() => {
                 res.status(204).end()

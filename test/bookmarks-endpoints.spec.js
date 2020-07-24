@@ -110,6 +110,16 @@ describe.only('Bookmark Endpoints (bookmarks-endpoints-spec.js)', () => {
     });
 
     describe(`GET /bookmarks/:id`, () => {
+
+        context(`Given no bookmarks in database`, () => {
+
+            it(`responds 404 when bookmark doesn't exist`, () => {
+                return supertest(app)
+                    .get(`/bookmarks/123`)
+                    .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                    .expect(404, { error: { message: `Bookmark Not Found`} })
+            });
+        });
         
         context(`Given 'bookmarks' database and table has data`, () => {
 
@@ -130,16 +140,6 @@ describe.only('Bookmark Endpoints (bookmarks-endpoints-spec.js)', () => {
                     .expect(200, expectedBookmark)
             });
     
-            it(`responds 404 when bookmark doesn't exist`, () => {
-                return supertest(app)
-                    .get(`/bookmarks/123`)
-                    .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
-                    .expect(404, { error: { message: `Bookmark Not Found`} })
-            });
-        });
-
-        context(`Given no bookmarks in database`, () => {
-
             it(`responds 404 when bookmark doesn't exist`, () => {
                 return supertest(app)
                     .get(`/bookmarks/123`)
@@ -173,6 +173,17 @@ describe.only('Bookmark Endpoints (bookmarks-endpoints-spec.js)', () => {
 
     describe('DELETE /bookmarks/:id', () => {
 
+        context(`Given no bookmarks in database`, () => {
+            
+            it(`responds with 404`, () => {
+                return supertest(app)
+                .delete(`/bookmarks/123456`)
+                .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                .expect(404, { error: { message: `Bookmark Not Found`} })
+            });
+
+        })
+
         context(`Given there are bookmarks in the database`, () => {
 
             const testBookmarks = fixtures.makeBookmarksArray();
@@ -199,16 +210,7 @@ describe.only('Bookmark Endpoints (bookmarks-endpoints-spec.js)', () => {
             });
         });
 
-        context(`Given no articles`, () => {
-            
-            it(`responds with 404`, () => {
-                return supertest(app)
-                .delete(`/bookmarks/123456`)
-                .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
-                .expect(404, { error: { message: `Bookmark Not Found`} })
-            });
 
-        })
     });
 
     describe('POST /bookmarks', () => {
@@ -307,6 +309,57 @@ describe.only('Bookmark Endpoints (bookmarks-endpoints-spec.js)', () => {
             })
         });
         
+    });
+
+    describe.only(`PATCH /bookmarks/:id`, () => {
+        
+        context(`Given no bookmarks in database`, () => {
+            it(`responds with 404`, () => {
+                const bookmarkId = 123456;
+                return supertest(app)
+                    .patch(`/bookmarks/${bookmarkId}`)
+                    .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                    .expect(404, { error: { message: `Bookmark Not Found` } })
+            });
+        });
+
+        context(`Given there are bookmarks in the database`, () => {
+            const testBookmarks = fixtures.makeBookmarksArray();
+
+            beforeEach(`insert bookmarks`, () => {
+                return db
+                    .into('bookmarks')
+                    .insert(testBookmarks)
+            })
+
+            it(`responds with 204 and updates the bookmark`, () => {
+                const idToUpdate = 2;
+                const updateBookmark = {
+                    title: 'updated test title',
+                    url: 'https://test-updated.com',
+                    description: 'updated test description',
+                    rating: 5,
+                };
+                const expectedBookmark = {
+                    ...testBookmarks[idToUpdate - 1],
+                    ...updateBookmark
+                };
+
+                return supertest(app)
+                    .patch(`/bookmarks/${idToUpdate}`)
+                    .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                    .send(updateBookmark)
+                    .expect(204)
+                    .then(res => {
+                        return supertest(app)
+                            .get(`/bookmarks/${idToUpdate}`)
+                            .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
+                            .expect(expectedBookmark)
+                    })
+            });
+
+        });
+
     });
 
 });
