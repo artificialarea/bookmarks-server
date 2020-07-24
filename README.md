@@ -8,7 +8,7 @@
 
 per: https://courses.thinkful.com/node-postgres-v1/checkpoint/17#assignment
 
-**branch: master**
+**branch: checkpoint-17**
 
 **[Thinkful solutions...](https://courses.thinkful.com/node-postgres-v1/checkpoint/17#solution)**
 
