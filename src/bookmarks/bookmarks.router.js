@@ -55,7 +55,7 @@ router
         BookmarksService.insertBookmark(knexInstance, newBookmark)
             .then(bookmark => {
                 res .status(201)
-                    .location(`/bookmarks/${bookmark.id}`)
+                    .location(req.originalUrl + `/${bookmark.id}`)
                     .json(serializeBookmark(bookmark))
             })
             .catch(next)

@@ -17,7 +17,7 @@ app.use(helmet())
 app.use(cors())
 app.use(validateBearerToken)
 
-app.use('/bookmarks', bookmarksRouter)
+app.use('/api/bookmarks', bookmarksRouter)
 
 app.use(errorHandlerFourOhFour)
 app.use(errorHandler)
