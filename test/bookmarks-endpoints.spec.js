@@ -249,7 +249,7 @@ describe.only('Bookmark Endpoints', () => {
                 rating: 1,
             };
             return supertest(app)
-                .post(`/api/bookmarks`)
+                .post(`/api/bookmarks/`)
                 .send(newBookmark)
                 .set('Authorization', `Bearer ${process.env.API_TOKEN}`)
                 .expect(201)

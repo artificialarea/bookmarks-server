@@ -1,14 +1,15 @@
 require('dotenv').config()
-const express = require('express')
+const path = require('path');
+const express = require('express');
 const xss = require('xss');
-const { isWebUri } = require('valid-url')
-const logger = require('../middleware/logger')
+const { isWebUri } = require('valid-url');
+const logger = require('../middleware/logger');
 
-const knex = require('knex')
-const BookmarksService = require('./bookmarks-service')
+const knex = require('knex');
+const BookmarksService = require('./bookmarks-service');
 
-const router = express.Router()
-const bodyParser = express.json()
+const router = express.Router();
+const bodyParser = express.json();
 
 const serializeBookmark = bookmark => ({
     id: bookmark.id,
@@ -55,7 +56,7 @@ router
         BookmarksService.insertBookmark(knexInstance, newBookmark)
             .then(bookmark => {
                 res .status(201)
-                    .location(req.originalUrl + `/${bookmark.id}`)
+                    .location(path.posix.join(req.originalUrl + `/${bookmark.id}`)) // re:posix and req.originalUrl, see details: https://courses.thinkful.com/node-postgres-v1/checkpoint/17#-api-prefix
                     .json(serializeBookmark(bookmark))
             })
             .catch(next)
