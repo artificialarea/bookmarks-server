@@ -15,6 +15,7 @@ During the checkpoint walk-thru I had the same heroku `npm run migrate:productio
 **1. `packgage.json "scripts"`**
 * Update, per ThinkChat suggestion:
 `"migrate:production": "env SSL=true NODE_TLS_REJECT_UNAUTHORIZED=0 DATABASE_URL=$(heroku config:get DATABASE_URL) npm run migrate"`
+* Alternatively: `"migrate:production": "env SSL=true DATABASE_URL=$(heroku config:get DATABASE_URL) npm run migrate"`
 
 **2. `postgrator-config.js`**
 * Add `"ssl": !!process.env.SSL` to the `module.export` properties.
