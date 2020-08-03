@@ -1,5 +1,27 @@
 # Bookmarks Server
 
+<br />
+
+## Checkpoint 20 exercise: deploy server and database to (heroku) production
+
+per: https://courses.thinkful.com/node-postgres-v1/checkpoint/20#full-stack-bookmarks
+
+### Alterations to fix `npm run migrate:production` issue
+
+Again, during the walk-thru I had the same heroku `npm run migrate:production` issue as before with my Blogful-api =/ [See Blogful README for additional context...](https://github.com/artificialarea/blogful-api/blob/master/README.md)
+
+**Updates required:**
+**1. `packgage.json "scripts"`**
+* Update, per ThinkChat suggestion:
+`"migrate:production": "env SSL=true NODE_TLS_REJECT_UNAUTHORIZED=0 DATABASE_URL=$(heroku config:get DATABASE_URL) npm run migrate"`
+**2. `postgrator-config.js`**
+* Add `"ssl": !!process.env.SSL` to the `module.export` properties.
+
+<hr />
+
+<br />
+<br />
+
 **pair: Alen + Sacha**
 
 <br />
